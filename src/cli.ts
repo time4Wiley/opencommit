@@ -6,7 +6,8 @@ import packageJSON from '../package.json' assert { type: 'json' };
 import { configCommand } from './commands/config';
 import { hookCommand, isHookCalled } from './commands/githook.js';
 import { prepareCommitMessageHook } from './commands/prepare-commit-msg-hook';
-import { commit } from './commands/commit';
+
+import { commit } from "./commands/commit-action";
 // import { checkIsLatestVersion } from './utils/checkIsLatestVersion';
 
 const extraArgs = process.argv.slice(2);
