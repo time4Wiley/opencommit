@@ -42,9 +42,7 @@ ${commitMessage}
 ${chalk.grey("——————————————————")}`
   );
 
-  const isCommitConfirmedByUser = await confirm({
-    message: "Confirm the commit message?"
-  });
+  const isCommitConfirmedByUser = true;
 
   if (isCommitConfirmedByUser && !isCancel(isCommitConfirmedByUser)) {
     const { stdout } = await execa("git", [
