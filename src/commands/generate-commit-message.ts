@@ -64,52 +64,11 @@ ${chalk.grey("——————————————————")}`
       process.exit(0);
     }
 
-    if (remotes.length === 1) {
-      const isPushConfirmedByUser = await confirm({
-        message: "Do you want to run `git push`?"
-      });
-
-      if (isPushConfirmedByUser && !isCancel(isPushConfirmedByUser)) {
-        const pushSpinner = spinner();
-
-        pushSpinner.start(`Running \`git push ${remotes[0]}\``);
-
-        const { stdout } = await execa("git", [
-          "push",
-          "--verbose",
-          remotes[0]
-        ]);
-
-        pushSpinner.stop(
-          `${chalk.green("✔")} successfully pushed all commits to ${remotes[0]}`
-        );
-
-        if (stdout) outro(stdout);
-      } else {
-        outro("`git push` aborted");
-        process.exit(0);
-      }
-    } else {
-      const selectedRemote = (await select({
-        message: "Choose a remote to push to",
-        options: remotes.map((remote) => ({ value: remote, label: remote }))
-      })) as string;
-
-      if (!isCancel(selectedRemote)) {
-        const pushSpinner = spinner();
-
-        pushSpinner.start(`Running \`git push ${selectedRemote}\``);
-
-        const { stdout } = await execa("git", ["push", selectedRemote]);
-
-        pushSpinner.stop(
-          `${chalk.green(
-            "✔"
-          )} successfully pushed all commits to ${selectedRemote}`
-        );
-
-        if (stdout) outro(stdout);
-      } else outro(`${chalk.gray("✖")} process cancelled`);
+    // use simple-git to git push if current branch has upstream
+    {
+      const { stdout } = await execa("git", ["push"]);
+      if (stdout) outro(stdout);
+      process.exit(0);
     }
   }
 };
