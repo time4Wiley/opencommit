@@ -1,5 +1,5 @@
 import { assertGitRepo } from "../utils/git";
-import { confirm, isCancel, outro, select, spinner } from "@clack/prompts";
+import { isCancel, outro, spinner } from "@clack/prompts";
 import {
   GenerateCommitMessageErrorEnum,
   generateCommitMessageWithChatCompletion
@@ -7,6 +7,7 @@ import {
 import chalk from "chalk";
 import { execa } from "execa";
 import { getGitRemotes } from "./commit";
+import { hasUpstream } from "./git-branch-has-upstream";
 
 export const generateCommitMessageFromGitDiff = async (
   diff: string,
@@ -65,6 +66,8 @@ ${chalk.grey("——————————————————")}`
     }
 
     // use simple-git to git push if current branch has upstream
+    // use simple-git to check whether the current branch has an upstream
+    if (await hasUpstream())
     {
       const { stdout } = await execa("git", ["push"]);
       if (stdout) outro(stdout);
