@@ -1,5 +1,5 @@
 import { getChangedFiles, getDiff, getStagedFiles, gitAdd } from "../utils/git";
-import { confirm, intro, isCancel, multiselect, outro, spinner } from "@clack/prompts";
+import { intro, outro, spinner } from "@clack/prompts";
 import { trytm } from "../utils/trytm";
 import chalk from "chalk";
 import { generateCommitMessageFromGitDiff } from "./generate-commit-message";
@@ -37,34 +37,8 @@ export async function commit(
   stagedFilesSpinner.start("Counting staged files");
 
   if (!stagedFiles.length) {
-    stagedFilesSpinner.stop("No files are staged");
-    const isStageAllAndCommitConfirmedByUser = await confirm({
-      message: "Do you want to stage all files and generate commit message?"
-    });
-
-    if (
-      isStageAllAndCommitConfirmedByUser &&
-      !isCancel(isStageAllAndCommitConfirmedByUser)
-    ) {
-      await commit(extraArgs, true);
-      process.exit(1);
-    }
-
-    if (stagedFiles.length === 0 && changedFiles.length > 0) {
-      const files = (await multiselect({
-        message: chalk.cyan("Select the files you want to add to the commit:"),
-        options: changedFiles.map((file) => ({
-          value: file,
-          label: file
-        }))
-      })) as string[];
-
-      if (isCancel(files)) process.exit(1);
-
-      await gitAdd({ files });
-    }
-
-    await commit(extraArgs, false);
+    stagedFilesSpinner.stop("No files are staged, staging all");
+    await commit(extraArgs, true);
     process.exit(1);
   }
 
