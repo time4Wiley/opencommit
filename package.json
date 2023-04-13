@@ -20,9 +20,7 @@
     "oc": "./out/cli.cjs",
     "oco": "./out/cli.cjs"
   },
-  "repository": {
-    "url": "https://github.com/di-sukharev/opencommit"
-  },
+  "repository": "https://github.com/di-sukharev/opencommit",
   "type": "module",
   "author": "https://github.com/di-sukharev",
   "license": "MIT",
