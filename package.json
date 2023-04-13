@@ -40,8 +40,8 @@
     "start": "node ./out/cli.cjs",
     "dev": "ts-node ./src/cli.ts",
     "build-only": "rimraf out && node esbuild.config.js",
-    "build": "yarn build-only && yarn install",
-    "install": "yarn pack && npm i -g opencommit-v2.0.0.tgz && mv opencommit-v2.0.0.tgz pack/",
+    "build": "yarn build-only && yarn distribute",
+    "distribute": "yarn pack && npm i -g opencommit-v2.0.0.tgz && mv opencommit-v2.0.0.tgz pack/",
     "deploy": "npm run build && npm version patch && npm publish --tag latest",
     "lint": "eslint src --ext ts && tsc --noEmit",
     "format": "prettier --write src"
