@@ -8,6 +8,7 @@ import { hookCommand, isHookCalled } from './commands/githook.js';
 import { prepareCommitMessageHook } from './commands/prepare-commit-msg-hook';
 
 import { commit } from "./commands/commit-action";
+import { beepDone, beepStart } from "./response-with-beep";
 // import { checkIsLatestVersion } from './utils/checkIsLatestVersion';
 
 const extraArgs = process.argv.slice(2);
@@ -23,12 +24,13 @@ cli(
   },
   async () => {
     // await checkIsLatestVersion();
-
+    beepStart()
     if (await isHookCalled()) {
       prepareCommitMessageHook();
     } else {
       commit(extraArgs);
     }
+    beepDone()
   },
   extraArgs
 );
