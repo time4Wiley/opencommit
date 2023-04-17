@@ -40,8 +40,10 @@
     "start": "node ./out/cli.cjs",
     "dev": "ts-node ./src/cli.ts",
     "build-only": "rimraf out && node esbuild.config.js",
-    "build": "yarn build-only && yarn distribute",
+    "build": "yarn build-only && yarn pkg && yarn sign-and-install",
     "distribute": "yarn pack && npm i -g opencommit-v2.0.0.tgz && mv opencommit-v2.0.0.tgz pack/",
+    "pkg": "pkg -t node18-macos-arm64 .",
+    "sign-and-install": "codesign --force --deep --sign - opencommit && mv opencommit /opt/homebrew/bin/",
     "deploy": "npm run build && npm version patch && npm publish --tag latest",
     "lint": "eslint src --ext ts && tsc --noEmit",
     "format": "prettier --write src"
