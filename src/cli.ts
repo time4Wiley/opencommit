@@ -24,13 +24,11 @@ cli(
   },
   async () => {
     // await checkIsLatestVersion();
-    beepStart()
     if (await isHookCalled()) {
       prepareCommitMessageHook();
     } else {
       commit(extraArgs);
     }
-    beepDone()
   },
   extraArgs
 );
