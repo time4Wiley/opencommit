@@ -10,7 +10,9 @@ export async function hasUpstream(): Promise<boolean> {
       } else {
         const upstreamBranch: string = stdout.trim();
         const currentBranch: string = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
-        resolve(currentBranch === upstreamBranch);
+
+        let upstreamBranchName = upstreamBranch.split('/')[1].trim();
+        resolve(currentBranch === upstreamBranchName);
       }
     });
   });

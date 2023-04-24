@@ -1,7 +1,7 @@
-import { execa } from "execa";
+import simpleGit from 'simple-git';
 
 export const getGitRemotes = async () => {
-  const { stdout } = await execa('git', ['remote']);
-  return stdout.split('\n').filter((remote) => Boolean(remote.trim()));
+  const git = simpleGit();
+  const remotes = await git.getRemotes(true);
+  return remotes.map((remote) => remote.name);
 };
-

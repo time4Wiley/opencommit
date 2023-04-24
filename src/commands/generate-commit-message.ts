@@ -6,7 +6,7 @@ import {
 } from "../generateCommitMessageFromGitDiff";
 import chalk from "chalk";
 import { execa } from "execa";
-import { getGitRemotes } from "./commit";
+// import { getGitRemotes } from "./commit";
 import { hasUpstream } from "./git-branch-has-upstream";
 
 export const generateCommitMessageFromGitDiff = async (
@@ -57,13 +57,13 @@ ${chalk.grey("——————————————————")}`
 
     outro(stdout);
 
-    const remotes = await getGitRemotes();
+    // const remotes = await getGitRemotes();
 
-    if (!remotes.length) {
-      const { stdout } = await execa("git", ["push"]);
-      if (stdout) outro(stdout);
-      process.exit(0);
-    }
+    // if (remotes.length) {
+    //   const { stdout } = await execa("git", ["push"]);
+    //   if (stdout) outro(stdout);
+    //   process.exit(0);
+    // }
 
     // use simple-git to git push if current branch has upstream
     // use simple-git to check whether the current branch has an upstream
