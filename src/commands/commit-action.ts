@@ -3,6 +3,7 @@ import { intro, outro, spinner } from "@clack/prompts";
 import { trytm } from "../utils/trytm";
 import chalk from "chalk";
 import { generateCommitMessageFromGitDiff } from "./generate-commit-message";
+import { removeOrigFromChangedFiles } from "./remove-orig-from-changed-files";
 
 export async function commit(
   extraArgs: string[] = [],
@@ -10,8 +11,8 @@ export async function commit(
 ) {
   if (isStageAllFlag) {
     const changedFiles = await getChangedFiles();
-
-    if (changedFiles) await gitAdd({ files: changedFiles });
+    const cleanedChangedFiles: string[] = removeOrigFromChangedFiles(changedFiles)
+    if (cleanedChangedFiles) await gitAdd({ files: cleanedChangedFiles });
     else {
       outro("No changes detected, write some code and run `oc` again");
       process.exit(1);
