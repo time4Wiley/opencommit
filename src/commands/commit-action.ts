@@ -2,7 +2,7 @@ import { getChangedFiles, getDiff, getStagedFiles, gitAdd } from "../utils/git";
 import { intro, outro, spinner } from "@clack/prompts";
 import { trytm } from "../utils/trytm";
 import chalk from "chalk";
-import { generateCommitMessageFromGitDiff } from "./generate-commit-message";
+import { done, generateCommitMessageFromGitDiff } from "./generate-commit-message";
 import { removeOrigFromChangedFiles } from "./remove-orig-from-changed-files";
 
 export async function commit(
@@ -60,6 +60,6 @@ export async function commit(
     outro(`${chalk.red("✖")} ${generateCommitError}`);
     process.exit(1);
   }
-
+  done()
   process.exit(0);
 }

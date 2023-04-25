@@ -9,6 +9,11 @@ import { execa } from "execa";
 // import { getGitRemotes } from "./commit";
 import { hasUpstream } from "./git-branch-has-upstream";
 
+export function done() {
+  outro(`${chalk.green("🌕 ✔✔✔")} Done!`);
+
+}
+
 export const generateCommitMessageFromGitDiff = async (
   diff: string,
   extraArgs: string[]
@@ -62,6 +67,7 @@ ${chalk.grey("——————————————————")}`
       const { stdout } = await execa("git", ["push"]);
       if (stdout) outro(stdout);
       outro(`${chalk.green("✔")} successfully pushed`);
+      done();
       process.exit(0);
     }
   }
