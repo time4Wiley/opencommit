@@ -57,16 +57,6 @@ ${chalk.grey("——————————————————")}`
 
     outro(stdout);
 
-    // const remotes = await getGitRemotes();
-
-    // if (remotes.length) {
-    //   const { stdout } = await execa("git", ["push"]);
-    //   if (stdout) outro(stdout);
-    //   process.exit(0);
-    // }
-
-    // use simple-git to git push if current branch has upstream
-    // use simple-git to check whether the current branch has an upstream
     if (await hasUpstream())
     {
       const { stdout } = await execa("git", ["push"]);
