@@ -61,7 +61,7 @@ ${chalk.grey("——————————————————")}`
     {
       const { stdout } = await execa("git", ["push"]);
       if (stdout) outro(stdout);
-      outro(chalk(...chalk.green("✔"), "successfully pushed"));
+      outro(`${chalk.green("✔")} successfully pushed`);
       process.exit(0);
     }
   }
