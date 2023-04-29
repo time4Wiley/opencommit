@@ -1,7 +1,8 @@
-import { command } from 'cleye';
-import { commit } from './commit-action';
+import { command } from "cleye";
+import { commit } from "./commit-action";
+import { execa } from "execa";
 
-const DRY_NAME = 'dry';
+const DRY_NAME = "dry";
 
 const dryCommandHandler = async (argv: any) => {
   if (argv.flags.help) {
@@ -18,13 +19,15 @@ Examples:
   }
 
   const args = argv._.slice(1);
-  await commit([...args, '--dry', ...argv.flags._]);
+  await commit([...args, "--dry", ...argv.flags._]);
+  // After the commit function is executed, run git reset to unstage the changes
+  await execa("git", ["reset"]);
 };
 
 export const dryCommand = command(
   {
     name: DRY_NAME,
-    parameters: ['[message]', '[files...]'],
+    parameters: ["[message]", "[files...]"]
 
   },
   dryCommandHandler
