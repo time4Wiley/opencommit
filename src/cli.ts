@@ -8,6 +8,7 @@ import { hookCommand, isHookCalled } from './commands/githook.js';
 import { prepareCommitMessageHook } from './commands/prepare-commit-msg-hook';
 
 import { commit } from "./commands/commit-action";
+import { dryCommand } from "./commands/dry";
 
 const extraArgs = process.argv.slice(2);
 
@@ -15,7 +16,7 @@ cli(
   {
     version: packageJSON.version,
     name: 'opencommit',
-    commands: [configCommand, hookCommand],
+    commands: [configCommand, hookCommand, dryCommand],
     flags: {},
     ignoreArgv: (type) => type === 'unknown-flag' || type === 'argument',
     help: { description: packageJSON.description }
