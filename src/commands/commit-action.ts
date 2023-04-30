@@ -1,9 +1,10 @@
-import { getChangedFiles, getDiff, getStagedFiles, gitAdd } from "../utils/git";
+import { getChangedFiles, getStagedFiles, gitAdd } from "../utils/git";
 import { intro, outro, spinner } from "@clack/prompts";
 import { trytm } from "../utils/trytm";
 import chalk from "chalk";
 import { done, generateCommitMessageFromGitDiff } from "./generate-commit-message";
 import { removeOrigFromChangedFiles } from "./remove-orig-from-changed-files";
+import { getDiff } from "../utils/get-diff";
 
 export async function commit(
   extraArgs: string[] = [],
@@ -52,7 +53,8 @@ export async function commit(
   const [, generateCommitError] = await trytm(
     generateCommitMessageFromGitDiff(
       await getDiff({ files: stagedFiles }),
-      extraArgs
+      extraArgs,
+      stagedFiles
     )
   );
 

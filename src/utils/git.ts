@@ -1,7 +1,7 @@
-import { execa } from 'execa';
-import { outro, spinner } from '@clack/prompts';
-import { readFileSync } from 'fs';
-import ignore, { Ignore } from 'ignore';
+import { execa } from "execa";
+import { spinner } from "@clack/prompts";
+import { readFileSync } from "fs";
+import ignore, { Ignore } from "ignore";
 
 export const assertGitRepo = async () => {
   try {
@@ -81,29 +81,3 @@ export const gitAdd = async ({ files }: { files: string[] }) => {
   gitAddSpinner.stop('Done');
 };
 
-export const getDiff = async ({ files }: { files: string[] }) => {
-  const lockFiles = files.filter(
-    (file) => file.includes('.lock') || file.includes('-lock.')
-  );
-
-  if (lockFiles.length) {
-    outro(
-      `Some files are '.lock' files which are excluded by default from 'git diff'. No commit messages are generated for this files:\n${lockFiles.join(
-        '\n'
-      )}`
-    );
-  }
-
-  const filesWithoutLocks = files.filter(
-    (file) => !file.includes('.lock') && !file.includes('-lock.')
-  );
-
-  const { stdout: diff } = await execa('git', [
-    'diff',
-    '--staged',
-    '--',
-    ...filesWithoutLocks
-  ]);
-
-  return diff;
-};

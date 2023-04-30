@@ -14,10 +14,35 @@ export function done() {
 
 }
 
+async function commitWithMessageAndPush(commitMessage: string, extraArgs: string[]) {
+  const isCommitConfirmedByUser = true;
+
+  if (isCommitConfirmedByUser && !isCancel(isCommitConfirmedByUser)) {
+    const { stdout } = await execa("git", [
+      "commit",
+      "-m",
+      commitMessage,
+      ...extraArgs
+    ]);
+
+    outro(`${chalk.green("✔")} successfully committed`);
+
+    outro(stdout);
+
+    if (await hasUpstream()) {
+      const { stdout } = await execa("git", ["push", ...extraArgs]);
+      if (stdout) outro(stdout);
+      outro(`${chalk.green("✔")} successfully pushed`);
+      done();
+      process.exit(0);
+    }
+  }
+}
+
 export const generateCommitMessageFromGitDiff = async (
   diff: string,
   extraArgs: string[]
-): Promise<void> => {
+  , stagedFiles: string[]): Promise<void> => {
   await assertGitRepo();
 
   const commitSpinner = spinner();
@@ -36,7 +61,7 @@ export const generateCommitMessageFromGitDiff = async (
     };
 
     outro(`${chalk.red("✖")} ${errorMessages[commitMessage.error]}`);
-    process.exit(1);
+    // process.exit(1);
   }
 
   commitSpinner.stop("📝 Commit message generated");
@@ -48,27 +73,13 @@ ${commitMessage}
 ${chalk.grey("——————————————————")}`
   );
 
-  const isCommitConfirmedByUser = true;
+  if (typeof commitMessage !== "string") {
+    const filenamesAsCommitMessage = stagedFiles.join("\n");
+    outro(`${chalk.red("🌕")} ${filenamesAsCommitMessage}`);
 
-  if (isCommitConfirmedByUser && !isCancel(isCommitConfirmedByUser)) {
-    const { stdout } = await execa("git", [
-      "commit",
-      "-m",
-      commitMessage,
-      ...extraArgs
-    ]);
-
-    outro(`${chalk.green("✔")} successfully committed`);
-
-    outro(stdout);
-
-    if (await hasUpstream())
-    {
-      const { stdout } = await execa("git", ["push"]);
-      if (stdout) outro(stdout);
-      outro(`${chalk.green("✔")} successfully pushed`);
-      done();
-      process.exit(0);
-    }
+    await commitWithMessageAndPush(filenamesAsCommitMessage, extraArgs);
+  }
+  else {
+    await commitWithMessageAndPush(commitMessage, extraArgs);
   }
 };
