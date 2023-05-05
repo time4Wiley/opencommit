@@ -2,9 +2,10 @@ import { getChangedFiles, getStagedFiles, gitAdd } from "../utils/git";
 import { intro, outro, spinner } from "@clack/prompts";
 import { trytm } from "../utils/trytm";
 import chalk from "chalk";
-import { done, generateCommitMessageFromGitDiff } from "./generate-commit-message";
+import { generateCommitMessageFromGitDiff } from "./generate-commit-message";
 import { removeOrigFromChangedFiles } from "./remove-orig-from-changed-files";
 import { getDiff } from "../utils/get-diff";
+import { done } from "./commit-with-message-and-push";
 
 export async function commit(
   extraArgs: string[] = [],

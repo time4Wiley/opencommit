@@ -1,43 +1,12 @@
 import { assertGitRepo } from "../utils/git";
-import { isCancel, outro, spinner } from "@clack/prompts";
+import { outro, spinner } from "@clack/prompts";
 import {
   GenerateCommitMessageErrorEnum,
   generateCommitMessageWithChatCompletion
 } from "../generateCommitMessageFromGitDiff";
 import chalk from "chalk";
-import { execa } from "execa";
 // import { getGitRemotes } from "./commit";
-import { hasUpstream } from "./git-branch-has-upstream";
-
-export function done() {
-  outro(`${chalk.green("🌕 ✔✔✔")} Done!`);
-
-}
-
-async function commitWithMessageAndPush(commitMessage: string, extraArgs: string[]) {
-  const isCommitConfirmedByUser = true;
-
-  if (isCommitConfirmedByUser && !isCancel(isCommitConfirmedByUser)) {
-    const { stdout } = await execa("git", [
-      "commit",
-      "-m",
-      commitMessage,
-      ...extraArgs
-    ]);
-
-    outro(`${chalk.green("✔")} successfully committed`);
-
-    outro(stdout);
-
-    if (await hasUpstream()) {
-      const { stdout } = await execa("git", ["push", ...extraArgs]);
-      if (stdout) outro(stdout);
-      outro(`${chalk.green("✔")} successfully pushed`);
-      done();
-      process.exit(0);
-    }
-  }
-}
+import { commitWithMessageAndPush } from "./commit-with-message-and-push";
 
 export const generateCommitMessageFromGitDiff = async (
   diff: string,
