@@ -19,6 +19,13 @@ export async function commitWithMessageAndPush(commitMessage: string, extraArgs:
       extraArgs.splice(insertingMessageIndex, 2);
     }
 
+    const shouldPushIndex = extraArgs.indexOf("--should_push");
+    let shouldPush = false;
+    if (shouldPushIndex !== -1) {
+      shouldPush = extraArgs[shouldPushIndex + 1] === "true";
+      extraArgs.splice(shouldPushIndex, 2);
+    }
+
     const { stdout } = await execa("git", [
       "commit",
       "-m",
@@ -30,12 +37,13 @@ export async function commitWithMessageAndPush(commitMessage: string, extraArgs:
 
     outro(stdout);
 
-    if (await hasUpstream()) {
+    if (shouldPush && await hasUpstream()) {
       const { stdout } = await execa("git", ["push", ...extraArgs]);
       if (stdout) outro(stdout);
       outro(`${chalk.green("✔")} successfully pushed`);
-      done();
-      process.exit(0);
     }
+
+    done();
+    process.exit(0);
   }
 }
