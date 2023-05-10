@@ -44,9 +44,12 @@ export async function commitWithMessageAndPush(commitMessage: string, extraArgs:
 
     // afterCommit is a string containing shell commands to run after the commit
     if (afterCommit) {
-      const { stdout } = await execa(afterCommit, [...extraArgs]);
-      if (stdout) outro(stdout);
-      outro(`${chalk.green("✔")} successfully ran after_commit`);
+      const commands = afterCommit.split("&&");
+      for (const command of commands) {
+        const { stdout } = await execa(command.trim(), [...extraArgs]);
+        if (stdout) outro(stdout);
+        outro(`${chalk.green("✔")} successfully ran ${command.trim()}`);
+      }
     }
 
     done();
