@@ -15,8 +15,8 @@ let apiKey = config?.OPENAI_API_KEY;
 let basePath = config?.OPENAI_BASE_PATH;
 
 const [command, mode] = process.argv.slice(2);
-
-if (!apiKey && command !== 'config' && mode !== CONFIG_MODES.set) {
+const needsKey = false
+if (needsKey && !apiKey && command !== 'config' && mode !== CONFIG_MODES.set) {
   intro('opencommit');
 
   outro(
