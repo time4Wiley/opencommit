@@ -26,7 +26,7 @@ export async function commit(
 
   if (!changedFiles?.length && !stagedFiles?.length) {
     outro(chalk.red("No changes detected"));
-    process.exit(1);
+    process.exit(0);
   }
 
   intro("open-commit");
