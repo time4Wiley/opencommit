@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
 import { cli } from "cleye";
 import packageJSON from "../package.json" assert { type: "json" };

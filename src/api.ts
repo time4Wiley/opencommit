@@ -13,7 +13,8 @@ const config = getConfig();
 
 let apiKey = config?.OPENAI_API_KEY;
 let basePath = config?.OPENAI_BASE_PATH;
-
+// https://chat.azj.best/v1
+basePath = 'http://localhost:3000/api/chat-gpt/v1-complete'
 const [command, mode] = process.argv.slice(2);
 const needsKey = false
 if (needsKey && !apiKey && command !== 'config' && mode !== CONFIG_MODES.set) {
