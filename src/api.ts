@@ -13,7 +13,7 @@ const config = getConfig();
 
 let apiKey = config?.OPENAI_API_KEY;
 let basePath = config?.OPENAI_BASE_PATH;
-basePath = 'https://chat.azj.best/v1'
+basePath = 'https://api.openai.com/v1'
 // basePath = 'http://localhost:3004/api/chat-gpt/opencommit'
 const [command, mode] = process.argv.slice(2);
 const needsKey = false
