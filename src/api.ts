@@ -48,7 +48,7 @@ class OpenAi {
   ): Promise<string | undefined> => {
     try {
       const { data } = await this.openAI.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages,
         temperature: 0,
         top_p: 0.1,
