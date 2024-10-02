@@ -45183,6 +45183,10 @@ ${lockFiles.join(
   ]);
   return diff;
 };
+var getRepoRoot = async () => {
+  const { stdout } = await execa("git", ["rev-parse", "--show-toplevel"]);
+  return stdout.trim();
+};
 
 // src/utils/trytm.ts
 var trytm = async (promise) => {
@@ -45346,15 +45350,31 @@ async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec =
   }
   const stagedFilesSpinner = le();
   stagedFilesSpinner.start("Counting staged files");
-  if (!stagedFiles.length || isStageAllFlag) {
-    stagedFilesSpinner.stop("Staging all files from repository root");
-    const repoRoot = await getRepoRoot();
-    await gitAdd({ files: ["."], cwd: repoRoot });
-  } else {
+  if (stagedFiles.length > 0) {
     stagedFilesSpinner.stop(
       `${stagedFiles.length} staged files:
 ${stagedFiles.map((file) => `  ${file}`).join("\n")}`
     );
+  } else {
+    stagedFilesSpinner.stop("No files are staged");
+    if (isStageAllFlag) {
+      const repoRoot = await getRepoRoot();
+      await gitAdd({ files: ["."], cwd: repoRoot });
+      ce("All changes staged.");
+    } else {
+      const isStageAllAndCommitConfirmedByUser = await Q3({
+        message: "Do you want to stage all files and generate commit message?"
+      });
+      if (hD2(isStageAllAndCommitConfirmedByUser))
+        process.exit(1);
+      if (isStageAllAndCommitConfirmedByUser) {
+        const repoRoot = await getRepoRoot();
+        await gitAdd({ files: ["."], cwd: repoRoot });
+        ce("All changes staged.");
+      } else {
+        process.exit(1);
+      }
+    }
   }
   const [, generateCommitError] = await trytm(
     generateCommitMessageFromGitDiff({
