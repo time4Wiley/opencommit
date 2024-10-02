@@ -201,16 +201,6 @@ export async function commit(
   fullGitMojiSpec: boolean = false,
   skipCommitConfirmation: boolean = false
 ) {
-  if (isStageAllFlag) {
-    const changedFiles = await getChangedFiles();
-
-    if (changedFiles) await gitAdd({ files: changedFiles });
-    else {
-      outro('No changes detected, write some code and run `oco` again');
-      process.exit(1);
-    }
-  }
-
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
   const [changedFiles, errorChangedFiles] = await trytm(getChangedFiles());
 
@@ -226,14 +216,13 @@ export async function commit(
   }
 
   const stagedFilesSpinner = spinner();
-
   stagedFilesSpinner.start('Counting staged files');
 
   if (!stagedFiles.length) {
+    stagedFilesSpinner.stop('No files are staged');
     if (isStageAllFlag) {
       await gitAdd({ files: changedFiles });
     } else {
-      stagedFilesSpinner.stop('No files are staged');
       const isStageAllAndCommitConfirmedByUser = await confirm({
         message: 'Do you want to stage all files and generate commit message?'
       });
@@ -241,22 +230,22 @@ export async function commit(
       if (isCancel(isStageAllAndCommitConfirmedByUser)) process.exit(1);
 
       if (isStageAllAndCommitConfirmedByUser) {
-        await commit(extraArgs, true, fullGitMojiSpec);
+        await gitAdd({ files: changedFiles });
+      } else {
         process.exit(1);
       }
-      // ... rest of the existing logic
     }
+  } else {
+    stagedFilesSpinner.stop(
+      `${stagedFiles.length} staged files:\n${stagedFiles
+        .map((file) => `  ${file}`)
+        .join('\n')}`
+    );
   }
-
-  stagedFilesSpinner.stop(
-    `${stagedFiles.length} staged files:\n${stagedFiles
-      .map((file) => `  ${file}`)
-      .join('\n')}`
-  );
 
   const [, generateCommitError] = await trytm(
     generateCommitMessageFromGitDiff({
-      diff: await getDiff({ files: stagedFiles }),
+      diff: await getDiff({ files: await getStagedFiles() }),
       extraArgs,
       fullGitMojiSpec,
       skipCommitConfirmation
