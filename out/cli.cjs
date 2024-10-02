@@ -1357,13 +1357,13 @@ var require_ini = __commonJS({
       const out = /* @__PURE__ */ Object.create(null);
       let p4 = out;
       let section = null;
-      const re3 = /^\[([^\]]*)\]$|^([^=]+)(=(.*))?$/i;
+      const re2 = /^\[([^\]]*)\]$|^([^=]+)(=(.*))?$/i;
       const lines = str2.split(/[\r\n]+/g);
       for (const line of lines) {
         if (!line || line.match(/^\s*[;#]/)) {
           continue;
         }
-        const match = line.match(re3);
+        const match = line.match(re2);
         if (!match) {
           continue;
         }
@@ -4550,9 +4550,9 @@ function X4(e3) {
 }
 function J4(e3) {
   const t2 = e3._reader;
-  return void 0 !== t2 && !!K5(t2);
+  return void 0 !== t2 && !!K4(t2);
 }
-function K5(e3) {
+function K4(e3) {
   return !!r2(e3) && (!!Object.prototype.hasOwnProperty.call(e3, "_readRequests") && e3 instanceof ReadableStreamDefaultReader);
 }
 function Z5(e3, t2) {
@@ -5316,7 +5316,7 @@ function Gt(e3, r3) {
 function Xt(e3) {
   e3._state = "closed";
   const t2 = e3._reader;
-  if (void 0 !== t2 && (j3(t2), K5(t2))) {
+  if (void 0 !== t2 && (j3(t2), K4(t2))) {
     const e4 = t2._readRequests;
     t2._readRequests = new S5(), e4.forEach((e5) => {
       e5._closeSteps();
@@ -5326,7 +5326,7 @@ function Xt(e3) {
 function Jt(e3, t2) {
   e3._state = "errored", e3._storedError = t2;
   const r3 = e3._reader;
-  void 0 !== r3 && (A4(r3, t2), K5(r3) ? Z5(r3, t2) : Ie(r3, t2));
+  void 0 !== r3 && (A4(r3, t2), K4(r3) ? Z5(r3, t2) : Ie(r3, t2));
 }
 function Kt(e3) {
   return new TypeError(`ReadableStream.prototype.${e3} can only be used on a ReadableStream`);
@@ -5446,7 +5446,7 @@ function qr(e3) {
 function Cr(e3) {
   "erroring" === e3._writableState && qr(e3);
 }
-var e2, o2, a3, i2, l2, s, y5, S5, v4, R6, T5, q5, C4, z5, L6, ReadableStreamDefaultReader, te, re2, ae2, ReadableStreamBYOBRequest, ReadableByteStreamController, ReadableStreamBYOBReader, Ue, WritableStream, WritableStreamDefaultWriter, lt, WritableStreamDefaultController, Pt, Wt, ReadableStreamDefaultController, ReadableStream3, er, ByteLengthQueuingStrategy, or, CountQueuingStrategy, TransformStream2, TransformStreamDefaultController;
+var e2, o2, a3, i2, l2, s, y5, S5, v4, R6, T5, q5, C4, z5, L6, ReadableStreamDefaultReader, te, re, ae2, ReadableStreamBYOBRequest, ReadableByteStreamController, ReadableStreamBYOBReader, Ue, WritableStream, WritableStreamDefaultWriter, lt, WritableStreamDefaultController, Pt, Wt, ReadableStreamDefaultController, ReadableStream3, er, ByteLengthQueuingStrategy, or, CountQueuingStrategy, TransformStream2, TransformStreamDefaultController;
 var init_ponyfill = __esm({
   "node_modules/formdata-node/node_modules/web-streams-polyfill/dist/ponyfill.mjs"() {
     e2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? Symbol : (e3) => `Symbol(${e3})`;
@@ -5512,13 +5512,13 @@ var init_ponyfill = __esm({
         E3(this, e3), this._readRequests = new S5();
       }
       get closed() {
-        return K5(this) ? this._closedPromise : d6(ee2("closed"));
+        return K4(this) ? this._closedPromise : d6(ee2("closed"));
       }
       cancel(e3) {
-        return K5(this) ? void 0 === this._ownerReadableStream ? d6(k6("cancel")) : P3(this, e3) : d6(ee2("cancel"));
+        return K4(this) ? void 0 === this._ownerReadableStream ? d6(k6("cancel")) : P3(this, e3) : d6(ee2("cancel"));
       }
       read() {
-        if (!K5(this))
+        if (!K4(this))
           return d6(ee2("read"));
         if (void 0 === this._ownerReadableStream)
           return d6(k6("read from"));
@@ -5532,7 +5532,7 @@ var init_ponyfill = __esm({
         }(this, { _chunkSteps: (t3) => e3({ value: t3, done: false }), _closeSteps: () => e3({ value: void 0, done: true }), _errorSteps: (e4) => t2(e4) }), r3;
       }
       releaseLock() {
-        if (!K5(this))
+        if (!K4(this))
           throw ee2("releaseLock");
         void 0 !== this._ownerReadableStream && function(e3) {
           W5(e3);
@@ -5580,12 +5580,12 @@ var init_ponyfill = __esm({
         return t2.releaseLock(), c2({ value: e3, done: true });
       }
     };
-    re2 = { next() {
+    re = { next() {
       return oe(this) ? this._asyncIteratorImpl.next() : d6(ne("next"));
     }, return(e3) {
       return oe(this) ? this._asyncIteratorImpl.return(e3) : d6(ne("return"));
     } };
-    "symbol" == typeof e2.asyncIterator && Object.defineProperty(re2, e2.asyncIterator, { value() {
+    "symbol" == typeof e2.asyncIterator && Object.defineProperty(re, e2.asyncIterator, { value() {
       return this;
     }, writable: true, configurable: true });
     ae2 = Number.isNaN || function(e3) {
@@ -6181,7 +6181,7 @@ var init_ponyfill = __esm({
         if (!H4(this))
           throw Kt("values");
         return function(e4, t2) {
-          const r3 = e4.getReader(), o3 = new te(r3, t2), n2 = Object.create(re2);
+          const r3 = e4.getReader(), o3 = new te(r3, t2), n2 = Object.create(re);
           return n2._asyncIteratorImpl = o3, n2;
         }(this, function(e4, t2) {
           F4(e4, t2);
@@ -27759,41 +27759,6 @@ var xD2 = class extends x3 {
     });
   }
 };
-var pD2 = Object.defineProperty;
-var fD2 = (t2, u3, F5) => u3 in t2 ? pD2(t2, u3, { enumerable: true, configurable: true, writable: true, value: F5 }) : t2[u3] = F5;
-var K3 = (t2, u3, F5) => (fD2(t2, typeof u3 != "symbol" ? u3 + "" : u3, F5), F5);
-var gD2 = class extends x3 {
-  constructor(u3) {
-    super(u3, false), K3(this, "options"), K3(this, "cursor", 0), this.options = u3.options, this.value = [...u3.initialValues ?? []], this.cursor = Math.max(this.options.findIndex(({ value: F5 }) => F5 === u3.cursorAt), 0), this.on("key", (F5) => {
-      F5 === "a" && this.toggleAll();
-    }), this.on("cursor", (F5) => {
-      switch (F5) {
-        case "left":
-        case "up":
-          this.cursor = this.cursor === 0 ? this.options.length - 1 : this.cursor - 1;
-          break;
-        case "down":
-        case "right":
-          this.cursor = this.cursor === this.options.length - 1 ? 0 : this.cursor + 1;
-          break;
-        case "space":
-          this.toggleValue();
-          break;
-      }
-    });
-  }
-  get _value() {
-    return this.options[this.cursor].value;
-  }
-  toggleAll() {
-    const u3 = this.value.length === this.options.length;
-    this.value = u3 ? [] : this.options.map((F5) => F5.value);
-  }
-  toggleValue() {
-    const u3 = this.value.includes(this._value);
-    this.value = u3 ? this.value.filter((F5) => F5 !== this._value) : [...this.value, this._value];
-  }
-};
 var bD2 = Object.defineProperty;
 var wD2 = (t2, u3, F5) => u3 in t2 ? bD2(t2, u3, { enumerable: true, configurable: true, writable: true, value: F5 }) : t2[u3] = F5;
 var Z3 = (t2, u3, F5) => (wD2(t2, typeof u3 != "symbol" ? u3 + "" : u3, F5), F5);
@@ -27864,7 +27829,7 @@ var q4 = u("\u25AA", "\u2022");
 var R5 = u("\u2500", "-");
 var G4 = u("\u256E", "+");
 var H3 = u("\u251C", "+");
-var K4 = u("\u256F", "+");
+var K3 = u("\u256F", "+");
 var U5 = u("\u25CF", "\u2022");
 var Z4 = u("\u25C6", "*");
 var z4 = u("\u25B2", "!");
@@ -27924,50 +27889,6 @@ ${import_picocolors.default.cyan(o)}
     }
   } }).prompt();
 };
-var re = (r3) => {
-  const n2 = (s2, t2) => {
-    const i3 = s2.label ?? String(s2.value);
-    return t2 === "active" ? `${import_picocolors.default.cyan(_5)} ${i3} ${s2.hint ? import_picocolors.default.dim(`(${s2.hint})`) : ""}` : t2 === "selected" ? `${import_picocolors.default.green(y4)} ${import_picocolors.default.dim(i3)}` : t2 === "cancelled" ? `${import_picocolors.default.strikethrough(import_picocolors.default.dim(i3))}` : t2 === "active-selected" ? `${import_picocolors.default.green(y4)} ${i3} ${s2.hint ? import_picocolors.default.dim(`(${s2.hint})`) : ""}` : t2 === "submitted" ? `${import_picocolors.default.dim(i3)}` : `${import_picocolors.default.dim(A3)} ${import_picocolors.default.dim(i3)}`;
-  };
-  return new gD2({ options: r3.options, initialValues: r3.initialValues, required: r3.required ?? true, cursorAt: r3.cursorAt, validate(s2) {
-    if (this.required && s2.length === 0)
-      return `Please select at least one option.
-${import_picocolors.default.reset(import_picocolors.default.dim(`Press ${import_picocolors.default.gray(import_picocolors.default.bgWhite(import_picocolors.default.inverse(" space ")))} to select, ${import_picocolors.default.gray(import_picocolors.default.bgWhite(import_picocolors.default.inverse(" enter ")))} to submit`))}`;
-  }, render() {
-    let s2 = `${import_picocolors.default.gray(a2)}
-${h2(this.state)}  ${r3.message}
-`;
-    switch (this.state) {
-      case "submit":
-        return `${s2}${import_picocolors.default.gray(a2)}  ${this.options.filter(({ value: t2 }) => this.value.includes(t2)).map((t2) => n2(t2, "submitted")).join(import_picocolors.default.dim(", ")) || import_picocolors.default.dim("none")}`;
-      case "cancel": {
-        const t2 = this.options.filter(({ value: i3 }) => this.value.includes(i3)).map((i3) => n2(i3, "cancelled")).join(import_picocolors.default.dim(", "));
-        return `${s2}${import_picocolors.default.gray(a2)}  ${t2.trim() ? `${t2}
-${import_picocolors.default.gray(a2)}` : ""}`;
-      }
-      case "error": {
-        const t2 = this.error.split(`
-`).map((i3, c3) => c3 === 0 ? `${import_picocolors.default.yellow(o)}  ${import_picocolors.default.yellow(i3)}` : `   ${i3}`).join(`
-`);
-        return s2 + import_picocolors.default.yellow(a2) + "  " + this.options.map((i3, c3) => {
-          const l3 = this.value.includes(i3.value), $6 = c3 === this.cursor;
-          return $6 && l3 ? n2(i3, "active-selected") : l3 ? n2(i3, "selected") : n2(i3, $6 ? "active" : "inactive");
-        }).join(`
-${import_picocolors.default.yellow(a2)}  `) + `
-` + t2 + `
-`;
-      }
-      default:
-        return `${s2}${import_picocolors.default.cyan(a2)}  ${this.options.map((t2, i3) => {
-          const c3 = this.value.includes(t2.value), l3 = i3 === this.cursor;
-          return l3 && c3 ? n2(t2, "active-selected") : c3 ? n2(t2, "selected") : n2(t2, l3 ? "active" : "inactive");
-        }).join(`
-${import_picocolors.default.cyan(a2)}  `)}
-${import_picocolors.default.cyan(o)}
-`;
-    }
-  } }).prompt();
-};
 var b5 = (r3) => r3.replace(ue(), "");
 var ie = (r3 = "", n2 = "") => {
   const s2 = `
@@ -27978,7 +27899,7 @@ ${r3}
   process.stdout.write(`${import_picocolors.default.gray(a2)}
 ${import_picocolors.default.green(f2)}  ${import_picocolors.default.reset(n2)} ${import_picocolors.default.gray(R5.repeat(Math.max(t2 - n2.length - 1, 1)) + G4)}
 ${i3}
-${import_picocolors.default.gray(H3 + R5.repeat(t2 + 2) + K4)}
+${import_picocolors.default.gray(H3 + R5.repeat(t2 + 2) + K3)}
 `);
 };
 var ae = (r3 = "") => {
@@ -45426,30 +45347,20 @@ async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec =
   const stagedFilesSpinner = le();
   stagedFilesSpinner.start("Counting staged files");
   if (!stagedFiles.length) {
-    stagedFilesSpinner.stop("No files are staged");
-    const isStageAllAndCommitConfirmedByUser = await Q3({
-      message: "Do you want to stage all files and generate commit message?"
-    });
-    if (hD2(isStageAllAndCommitConfirmedByUser))
-      process.exit(1);
-    if (isStageAllAndCommitConfirmedByUser) {
-      await commit(extraArgs2, true, fullGitMojiSpec);
-      process.exit(1);
-    }
-    if (stagedFiles.length === 0 && changedFiles.length > 0) {
-      const files = await re({
-        message: source_default.cyan("Select the files you want to add to the commit:"),
-        options: changedFiles.map((file) => ({
-          value: file,
-          label: file
-        }))
+    if (isStageAllFlag) {
+      await gitAdd({ files: changedFiles });
+    } else {
+      stagedFilesSpinner.stop("No files are staged");
+      const isStageAllAndCommitConfirmedByUser = await Q3({
+        message: "Do you want to stage all files and generate commit message?"
       });
-      if (hD2(files))
+      if (hD2(isStageAllAndCommitConfirmedByUser))
         process.exit(1);
-      await gitAdd({ files });
+      if (isStageAllAndCommitConfirmedByUser) {
+        await commit(extraArgs2, true, fullGitMojiSpec);
+        process.exit(1);
+      }
     }
-    await commit(extraArgs2, false, fullGitMojiSpec);
-    process.exit(1);
   }
   stagedFilesSpinner.stop(
     `${stagedFiles.length} staged files:
@@ -45822,6 +45733,12 @@ Z2(
         alias: "y",
         description: "Skip commit confirmation prompt",
         default: false
+      },
+      stageAll: {
+        type: Boolean,
+        alias: "s",
+        description: "Automatically stage all files",
+        default: false
       }
     },
     ignoreArgv: (type2) => type2 === "unknown-flag" || type2 === "argument",
@@ -45833,7 +45750,7 @@ Z2(
     if (await isHookCalled()) {
       prepareCommitMessageHook();
     } else {
-      commit(extraArgs, false, flags.fgm, flags.yes);
+      commit(extraArgs, flags.stageAll, flags.fgm, flags.yes);
     }
   },
   extraArgs
