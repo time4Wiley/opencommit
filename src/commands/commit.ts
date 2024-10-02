@@ -18,6 +18,7 @@ import {
 } from "../utils/git";
 import { trytm } from '../utils/trytm';
 import { getConfig } from './config';
+import { goToGitRoot } from '../go-to-git-root';
 
 const config = getConfig();
 
@@ -201,6 +202,9 @@ export async function commit(
   skipCommitConfirmation: boolean = false
 ) {
   await assertGitRepo();
+
+  // Go to git root before performing any operations
+  goToGitRoot();
 
   console.log(`Current working directory: ${process.cwd()}`);
   console.log(`Is stage all flag set: ${isStageAllFlag}`);
