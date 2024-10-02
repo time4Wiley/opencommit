@@ -45337,8 +45337,12 @@ ${source_default.grey("\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2
 };
 async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec = false, skipCommitConfirmation = false) {
   await assertGitRepo();
+  console.log(`Current working directory: ${process.cwd()}`);
+  console.log(`Is stage all flag set: ${isStageAllFlag}`);
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
   const [changedFiles, errorChangedFiles] = await trytm(getChangedFiles());
+  console.log(`Staged files: ${stagedFiles}`);
+  console.log(`Changed files: ${changedFiles}`);
   if (!changedFiles?.length && !stagedFiles?.length) {
     ce(source_default.red("No changes detected"));
     process.exit(1);
