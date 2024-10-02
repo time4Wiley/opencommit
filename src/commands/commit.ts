@@ -218,23 +218,9 @@ export async function commit(
   const stagedFilesSpinner = spinner();
   stagedFilesSpinner.start('Counting staged files');
 
-  if (!stagedFiles.length) {
-    stagedFilesSpinner.stop('No files are staged');
-    if (isStageAllFlag) {
-      await gitAdd({ files: changedFiles });
-    } else {
-      const isStageAllAndCommitConfirmedByUser = await confirm({
-        message: 'Do you want to stage all files and generate commit message?'
-      });
-
-      if (isCancel(isStageAllAndCommitConfirmedByUser)) process.exit(1);
-
-      if (isStageAllAndCommitConfirmedByUser) {
-        await gitAdd({ files: changedFiles });
-      } else {
-        process.exit(1);
-      }
-    }
+  if (!stagedFiles.length || isStageAllFlag) {
+    stagedFilesSpinner.stop('Staging all files');
+    await gitAdd({ files: ['.'] });  // Stage all files from repo root
   } else {
     stagedFilesSpinner.stop(
       `${stagedFiles.length} staged files:\n${stagedFiles
