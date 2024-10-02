@@ -45157,11 +45157,8 @@ var getChangedFiles = async () => {
   );
   return files.sort();
 };
-var gitAdd = async ({ files }) => {
-  const gitAddSpinner = le();
-  gitAddSpinner.start("Adding files to commit");
-  await execa("git", ["add", ...files]);
-  gitAddSpinner.stop("Done");
+var gitAdd = async ({ files, cwd }) => {
+  await execa("git", ["add", ...files], { cwd });
 };
 var getDiff = async ({ files }) => {
   const lockFiles = files.filter(
@@ -45335,6 +45332,7 @@ ${source_default.grey("\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2
   }
 };
 async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec = false, skipCommitConfirmation = false) {
+  await assertGitRepo();
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
   const [changedFiles, errorChangedFiles] = await trytm(getChangedFiles());
   if (!changedFiles?.length && !stagedFiles?.length) {
@@ -45349,8 +45347,9 @@ async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec =
   const stagedFilesSpinner = le();
   stagedFilesSpinner.start("Counting staged files");
   if (!stagedFiles.length || isStageAllFlag) {
-    stagedFilesSpinner.stop("Staging all files");
-    await gitAdd({ files: ["."] });
+    stagedFilesSpinner.stop("Staging all files from repository root");
+    const repoRoot = await getRepoRoot();
+    await gitAdd({ files: ["."], cwd: repoRoot });
   } else {
     stagedFilesSpinner.stop(
       `${stagedFiles.length} staged files:
