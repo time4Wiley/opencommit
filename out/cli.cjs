@@ -45324,15 +45324,6 @@ ${source_default.grey("\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2
   }
 };
 async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec = false, skipCommitConfirmation = false) {
-  if (isStageAllFlag) {
-    const changedFiles2 = await getChangedFiles();
-    if (changedFiles2)
-      await gitAdd({ files: changedFiles2 });
-    else {
-      ce("No changes detected, write some code and run `oco` again");
-      process.exit(1);
-    }
-  }
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
   const [changedFiles, errorChangedFiles] = await trytm(getChangedFiles());
   if (!changedFiles?.length && !stagedFiles?.length) {
@@ -45347,28 +45338,30 @@ async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec =
   const stagedFilesSpinner = le();
   stagedFilesSpinner.start("Counting staged files");
   if (!stagedFiles.length) {
+    stagedFilesSpinner.stop("No files are staged");
     if (isStageAllFlag) {
       await gitAdd({ files: changedFiles });
     } else {
-      stagedFilesSpinner.stop("No files are staged");
       const isStageAllAndCommitConfirmedByUser = await Q3({
         message: "Do you want to stage all files and generate commit message?"
       });
       if (hD2(isStageAllAndCommitConfirmedByUser))
         process.exit(1);
       if (isStageAllAndCommitConfirmedByUser) {
-        await commit(extraArgs2, true, fullGitMojiSpec);
+        await gitAdd({ files: changedFiles });
+      } else {
         process.exit(1);
       }
     }
-  }
-  stagedFilesSpinner.stop(
-    `${stagedFiles.length} staged files:
+  } else {
+    stagedFilesSpinner.stop(
+      `${stagedFiles.length} staged files:
 ${stagedFiles.map((file) => `  ${file}`).join("\n")}`
-  );
+    );
+  }
   const [, generateCommitError] = await trytm(
     generateCommitMessageFromGitDiff({
-      diff: await getDiff({ files: stagedFiles }),
+      diff: await getDiff({ files: await getStagedFiles() }),
       extraArgs: extraArgs2,
       fullGitMojiSpec,
       skipCommitConfirmation
