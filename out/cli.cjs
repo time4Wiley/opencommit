@@ -45200,6 +45200,18 @@ var trytm = async (promise) => {
   }
 };
 
+// src/go-to-git-root.ts
+var import_child_process = require("child_process");
+function goToGitRoot() {
+  try {
+    const gitRoot = (0, import_child_process.execSync)("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+    process.chdir(gitRoot);
+    console.log(`Current working directory changed to: ${process.cwd()}`);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+}
+
 // src/commands/commit.ts
 var config6 = getConfig();
 var getGitRemotes = async () => {
@@ -45337,6 +45349,7 @@ ${source_default.grey("\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2
 };
 async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec = false, skipCommitConfirmation = false) {
   await assertGitRepo();
+  goToGitRoot();
   console.log(`Current working directory: ${process.cwd()}`);
   console.log(`Is stage all flag set: ${isStageAllFlag}`);
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
