@@ -27389,7 +27389,15 @@ var package_default = {
     "test:unit:docker": "npm run test:docker-build && DOCKER_CONTENT_TRUST=0 docker run --rm oco-test npm run test:unit",
     "test:e2e": "npm run test:e2e:setup && jest test/e2e",
     "test:e2e:setup": "sh test/e2e/setup.sh",
-    "test:e2e:docker": "npm run test:docker-build && DOCKER_CONTENT_TRUST=0 docker run --rm oco-test npm run test:e2e"
+    "test:e2e:docker": "npm run test:docker-build && DOCKER_CONTENT_TRUST=0 docker run --rm oco-test npm run test:e2e",
+    pkg: "pkg -t node18-macos-arm64 .",
+    "pkg-x64": "pkg -t node18-macos-x64 .",
+    "pkg-linux": "pkg -t node18-linuxstatic-x64 .",
+    "pkg-linux-arm64": "pkg -t node18-linuxstatic-arm64 .",
+    "pkg-windows": "pkg -t node18-win32-x64 .",
+    "sign-and-install": "codesign --force --deep --sign - opencommit && mv opencommit /opt/homebrew/bin/",
+    "sign-and-install-x64": "codesign --force --deep --sign - opencommit && mv opencommit /usr/local/bin/",
+    "build-install-linux-arm64": "npm run build-only && npm run pkg-linux-arm64 && sudo cp opencommit /usr/bin/"
   },
   devDependencies: {
     "@commitlint/types": "^17.4.4",
@@ -27429,6 +27437,9 @@ var package_default = {
     ini: "^3.0.1",
     inquirer: "^9.1.4",
     openai: "^4.57.0"
+  },
+  volta: {
+    node: "18.20.4"
   }
 };
 
@@ -45337,22 +45348,9 @@ async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec =
   }
   const stagedFilesSpinner = le();
   stagedFilesSpinner.start("Counting staged files");
-  if (!stagedFiles.length) {
-    stagedFilesSpinner.stop("No files are staged");
-    if (isStageAllFlag) {
-      await gitAdd({ files: changedFiles });
-    } else {
-      const isStageAllAndCommitConfirmedByUser = await Q3({
-        message: "Do you want to stage all files and generate commit message?"
-      });
-      if (hD2(isStageAllAndCommitConfirmedByUser))
-        process.exit(1);
-      if (isStageAllAndCommitConfirmedByUser) {
-        await gitAdd({ files: changedFiles });
-      } else {
-        process.exit(1);
-      }
-    }
+  if (!stagedFiles.length || isStageAllFlag) {
+    stagedFilesSpinner.stop("Staging all files");
+    await gitAdd({ files: ["."] });
   } else {
     stagedFilesSpinner.stop(
       `${stagedFiles.length} staged files:
