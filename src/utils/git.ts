@@ -2,7 +2,7 @@ import { execa } from 'execa';
 import { readFileSync } from 'fs';
 import ignore, { Ignore } from 'ignore';
 
-import { outro, spinner } from '@clack/prompts';
+import { outro } from '@clack/prompts';
 
 export const assertGitRepo = async () => {
   try {
@@ -73,14 +73,8 @@ export const getChangedFiles = async (): Promise<string[]> => {
   return files.sort();
 };
 
-export const gitAdd = async ({ files }: { files: string[] }) => {
-  const gitAddSpinner = spinner();
-
-  gitAddSpinner.start('Adding files to commit');
-
-  await execa('git', ['add', ...files]);
-
-  gitAddSpinner.stop('Done');
+export const gitAdd = async ({ files, cwd }: { files: string[]; cwd?: string }) => {
+  await execa('git', ['add', ...files], { cwd });
 };
 
 export const getDiff = async ({ files }: { files: string[] }) => {
@@ -116,4 +110,14 @@ export const getDiff = async ({ files }: { files: string[] }) => {
   ]);
 
   return diff;
+};
+
+export const getRepoRoot = async (): Promise<string> => {
+  const { stdout } = await execa('git', ['rev-parse', '--show-toplevel']);
+  return stdout.trim();
+};
+
+export const getGitRootDir = async (): Promise<string> => {
+  const { stdout } = await execa('git', ['rev-parse', '--show-toplevel']);
+  return stdout.trim();
 };
