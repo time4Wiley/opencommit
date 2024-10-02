@@ -25,6 +25,12 @@ cli(
         alias: 'y',
         description: 'Skip commit confirmation prompt',
         default: false
+      },
+      stageAll: {
+        type: Boolean,
+        alias: 's',
+        description: 'Automatically stage all files',
+        default: false
       }
     },
     ignoreArgv: (type) => type === 'unknown-flag' || type === 'argument',
@@ -37,7 +43,7 @@ cli(
     if (await isHookCalled()) {
       prepareCommitMessageHook();
     } else {
-      commit(extraArgs, false, flags.fgm, flags.yes);
+      commit(extraArgs, flags.stageAll, flags.fgm, flags.yes);
     }
   },
   extraArgs

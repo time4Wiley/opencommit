@@ -230,34 +230,22 @@ export async function commit(
   stagedFilesSpinner.start('Counting staged files');
 
   if (!stagedFiles.length) {
-    stagedFilesSpinner.stop('No files are staged');
-    const isStageAllAndCommitConfirmedByUser = await confirm({
-      message: 'Do you want to stage all files and generate commit message?'
-    });
+    if (isStageAllFlag) {
+      await gitAdd({ files: changedFiles });
+    } else {
+      stagedFilesSpinner.stop('No files are staged');
+      const isStageAllAndCommitConfirmedByUser = await confirm({
+        message: 'Do you want to stage all files and generate commit message?'
+      });
 
-    if (isCancel(isStageAllAndCommitConfirmedByUser)) process.exit(1);
+      if (isCancel(isStageAllAndCommitConfirmedByUser)) process.exit(1);
 
-    if (isStageAllAndCommitConfirmedByUser) {
-      await commit(extraArgs, true, fullGitMojiSpec);
-      process.exit(1);
+      if (isStageAllAndCommitConfirmedByUser) {
+        await commit(extraArgs, true, fullGitMojiSpec);
+        process.exit(1);
+      }
+      // ... rest of the existing logic
     }
-
-    if (stagedFiles.length === 0 && changedFiles.length > 0) {
-      const files = (await multiselect({
-        message: chalk.cyan('Select the files you want to add to the commit:'),
-        options: changedFiles.map((file) => ({
-          value: file,
-          label: file
-        }))
-      })) as string[];
-
-      if (isCancel(files)) process.exit(1);
-
-      await gitAdd({ files });
-    }
-
-    await commit(extraArgs, false, fullGitMojiSpec);
-    process.exit(1);
   }
 
   stagedFilesSpinner.stop(
