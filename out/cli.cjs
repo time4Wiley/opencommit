@@ -27389,7 +27389,15 @@ var package_default = {
     "test:unit:docker": "npm run test:docker-build && DOCKER_CONTENT_TRUST=0 docker run --rm oco-test npm run test:unit",
     "test:e2e": "npm run test:e2e:setup && jest test/e2e",
     "test:e2e:setup": "sh test/e2e/setup.sh",
-    "test:e2e:docker": "npm run test:docker-build && DOCKER_CONTENT_TRUST=0 docker run --rm oco-test npm run test:e2e"
+    "test:e2e:docker": "npm run test:docker-build && DOCKER_CONTENT_TRUST=0 docker run --rm oco-test npm run test:e2e",
+    pkg: "pkg -t node18-macos-arm64 .",
+    "pkg-x64": "pkg -t node18-macos-x64 .",
+    "pkg-linux": "pkg -t node18-linuxstatic-x64 .",
+    "pkg-linux-arm64": "pkg -t node18-linuxstatic-arm64 .",
+    "pkg-windows": "pkg -t node18-win32-x64 .",
+    "sign-and-install": "codesign --force --deep --sign - opencommit && mv opencommit /opt/homebrew/bin/",
+    "sign-and-install-x64": "codesign --force --deep --sign - opencommit && mv opencommit /usr/local/bin/",
+    "build-install-linux-arm64": "npm run build-only && npm run pkg-linux-arm64 && sudo cp opencommit /usr/bin/"
   },
   devDependencies: {
     "@commitlint/types": "^17.4.4",
@@ -27429,6 +27437,9 @@ var package_default = {
     ini: "^3.0.1",
     inquirer: "^9.1.4",
     openai: "^4.57.0"
+  },
+  volta: {
+    node: "18.20.4"
   }
 };
 
@@ -45146,11 +45157,8 @@ var getChangedFiles = async () => {
   );
   return files.sort();
 };
-var gitAdd = async ({ files }) => {
-  const gitAddSpinner = le();
-  gitAddSpinner.start("Adding files to commit");
-  await execa("git", ["add", ...files]);
-  gitAddSpinner.stop("Done");
+var gitAdd = async ({ files, cwd }) => {
+  await execa("git", ["add", ...files], { cwd });
 };
 var getDiff = async ({ files }) => {
   const lockFiles = files.filter(
@@ -45174,6 +45182,10 @@ ${lockFiles.join(
     ...filesWithoutLocks
   ]);
   return diff;
+};
+var getRepoRoot = async () => {
+  const { stdout } = await execa("git", ["rev-parse", "--show-toplevel"]);
+  return stdout.trim();
 };
 
 // src/utils/trytm.ts
@@ -45324,6 +45336,7 @@ ${source_default.grey("\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2014\u2
   }
 };
 async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec = false, skipCommitConfirmation = false) {
+  await assertGitRepo();
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
   const [changedFiles, errorChangedFiles] = await trytm(getChangedFiles());
   if (!changedFiles?.length && !stagedFiles?.length) {
@@ -45337,10 +45350,17 @@ async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec =
   }
   const stagedFilesSpinner = le();
   stagedFilesSpinner.start("Counting staged files");
-  if (!stagedFiles.length) {
+  if (stagedFiles.length > 0) {
+    stagedFilesSpinner.stop(
+      `${stagedFiles.length} staged files:
+${stagedFiles.map((file) => `  ${file}`).join("\n")}`
+    );
+  } else {
     stagedFilesSpinner.stop("No files are staged");
     if (isStageAllFlag) {
-      await gitAdd({ files: changedFiles });
+      const repoRoot = await getRepoRoot();
+      await gitAdd({ files: ["."], cwd: repoRoot });
+      ce("All changes staged.");
     } else {
       const isStageAllAndCommitConfirmedByUser = await Q3({
         message: "Do you want to stage all files and generate commit message?"
@@ -45348,16 +45368,13 @@ async function commit(extraArgs2 = [], isStageAllFlag = false, fullGitMojiSpec =
       if (hD2(isStageAllAndCommitConfirmedByUser))
         process.exit(1);
       if (isStageAllAndCommitConfirmedByUser) {
-        await gitAdd({ files: changedFiles });
+        const repoRoot = await getRepoRoot();
+        await gitAdd({ files: ["."], cwd: repoRoot });
+        ce("All changes staged.");
       } else {
         process.exit(1);
       }
     }
-  } else {
-    stagedFilesSpinner.stop(
-      `${stagedFiles.length} staged files:
-${stagedFiles.map((file) => `  ${file}`).join("\n")}`
-    );
   }
   const [, generateCommitError] = await trytm(
     generateCommitMessageFromGitDiff({
