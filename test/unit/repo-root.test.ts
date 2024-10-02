@@ -1,4 +1,3 @@
-import { execa } from 'execa';
 import { getRepoRoot } from "../../src/utils/git";
 
 jest.mock('execa');

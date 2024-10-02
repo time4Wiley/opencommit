@@ -202,8 +202,14 @@ export async function commit(
 ) {
   await assertGitRepo();
 
+  console.log(`Current working directory: ${process.cwd()}`);
+  console.log(`Is stage all flag set: ${isStageAllFlag}`);
+
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
   const [changedFiles, errorChangedFiles] = await trytm(getChangedFiles());
+
+  console.log(`Staged files: ${stagedFiles}`);
+  console.log(`Changed files: ${changedFiles}`);
 
   if (!changedFiles?.length && !stagedFiles?.length) {
     outro(chalk.red('No changes detected'));
@@ -247,7 +253,6 @@ export async function commit(
       }
     }
   }
-
   const [, generateCommitError] = await trytm(
     generateCommitMessageFromGitDiff({
       diff: await getDiff({ files: await getStagedFiles() }),

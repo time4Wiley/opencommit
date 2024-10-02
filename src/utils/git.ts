@@ -116,3 +116,8 @@ export const getRepoRoot = async (): Promise<string> => {
   const { stdout } = await execa('git', ['rev-parse', '--show-toplevel']);
   return stdout.trim();
 };
+
+export const getGitRootDir = async (): Promise<string> => {
+  const { stdout } = await execa('git', ['rev-parse', '--show-toplevel']);
+  return stdout.trim();
+};
