@@ -2,7 +2,6 @@ import {
   confirm,
   intro,
   isCancel,
-  multiselect,
   outro,
   select,
   spinner
@@ -13,10 +12,10 @@ import { generateCommitMessageByDiff } from '../generateCommitMessageFromGitDiff
 import {
   assertGitRepo,
   getChangedFiles,
-  getDiff,
+  getDiff, getRepoRoot,
   getStagedFiles,
   gitAdd
-} from '../utils/git';
+} from "../utils/git";
 import { trytm } from '../utils/trytm';
 import { getConfig } from './config';
 
@@ -201,6 +200,8 @@ export async function commit(
   fullGitMojiSpec: boolean = false,
   skipCommitConfirmation: boolean = false
 ) {
+  await assertGitRepo();
+
   const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
   const [changedFiles, errorChangedFiles] = await trytm(getChangedFiles());
 
@@ -218,15 +219,33 @@ export async function commit(
   const stagedFilesSpinner = spinner();
   stagedFilesSpinner.start('Counting staged files');
 
-  if (!stagedFiles.length || isStageAllFlag) {
-    stagedFilesSpinner.stop('Staging all files');
-    await gitAdd({ files: ['.'] });  // Stage all files from repo root
-  } else {
+  if (stagedFiles.length > 0) {
     stagedFilesSpinner.stop(
       `${stagedFiles.length} staged files:\n${stagedFiles
         .map((file) => `  ${file}`)
         .join('\n')}`
     );
+  } else {
+    stagedFilesSpinner.stop('No files are staged');
+    if (isStageAllFlag) {
+      const repoRoot = await getRepoRoot();
+      await gitAdd({ files: ['.'], cwd: repoRoot });
+      outro('All changes staged.');
+    } else {
+      const isStageAllAndCommitConfirmedByUser = await confirm({
+        message: 'Do you want to stage all files and generate commit message?'
+      });
+
+      if (isCancel(isStageAllAndCommitConfirmedByUser)) process.exit(1);
+
+      if (isStageAllAndCommitConfirmedByUser) {
+        const repoRoot = await getRepoRoot();
+        await gitAdd({ files: ['.'], cwd: repoRoot });
+        outro('All changes staged.');
+      } else {
+        process.exit(1);
+      }
+    }
   }
 
   const [, generateCommitError] = await trytm(
