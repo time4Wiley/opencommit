@@ -1,0 +1,34 @@
+import { cli } from "cleye";
+import packageJSON from "../package.json" assert { type: "json" };
+
+import { configCommand } from "./commands/config";
+import { hookCommand, isHookCalled } from "./commands/githook.js";
+import { prepareCommitMessageHook } from "./commands/prepare-commit-msg-hook";
+
+import { commit } from "./commands/commit-action";
+import { dryCommand } from "./commands/dry";
+import { goToGitRoot } from "./go-to-git-root";
+
+const extraArgs = process.argv.slice(2);
+
+goToGitRoot();
+
+cli(
+  {
+    version: packageJSON.version,
+    name: 'opencommit',
+    commands: [configCommand, hookCommand, dryCommand],
+    flags: {},
+    ignoreArgv: (type) => type === 'unknown-flag' || type === 'argument',
+    help: { description: packageJSON.description }
+  },
+  async () => {
+    // await checkIsLatestVersion();
+    if (await isHookCalled()) {
+      await prepareCommitMessageHook();
+    } else {
+      await commit(extraArgs);
+    }
+  },
+  extraArgs
+); 

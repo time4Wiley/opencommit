@@ -19,7 +19,9 @@ class OpencommitLocal < Formula
     bin.install_symlink "opencommit-hb" => "oc-hb"
     bin.install_symlink "opencommit-hb" => "oco-hb"
     
-    # Install the wasm file
+    # Install the wasm file where the executable can find it
+    bin.install "out/tiktoken_bg.wasm"
+    # Also install in lib for completeness
     lib.install "out/tiktoken_bg.wasm"
   end
 

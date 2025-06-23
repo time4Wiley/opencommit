@@ -56,7 +56,10 @@ chmod +x "$TEMP_DIR/bin/opencommit-hb"
 ln -s "$TEMP_DIR/bin/opencommit-hb" "$TEMP_DIR/bin/oc-hb"
 ln -s "$TEMP_DIR/bin/opencommit-hb" "$TEMP_DIR/bin/oco-hb"
 
-# Copy wasm file
+# Copy wasm file to the same directory as the executable (where it can be found)
+cp out/tiktoken_bg.wasm "$TEMP_DIR/bin/"
+
+# Also copy to lib directory for completeness
 mkdir -p "$TEMP_DIR/lib"
 cp out/tiktoken_bg.wasm "$TEMP_DIR/lib/"
 
