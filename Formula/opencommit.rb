@@ -1,7 +1,7 @@
 class Opencommit < Formula
-  desc "GPT CLI to auto-generate impressive commits in 1 second"
-  homepage "https://github.com/di-sukharev/opencommit"
-  url "https://github.com/di-sukharev/opencommit/archive/refs/tags/v2.0.0.tar.gz"
+  desc "GPT CLI to auto-generate impressive commits in 1 second (fork with -hb suffix)"
+  homepage "https://github.com/time4Wiley/opencommit"
+  url "https://github.com/time4Wiley/opencommit/archive/refs/tags/v2.0.0.tar.gz"
   version "2.0.0"
   sha256 "PLACEHOLDER_SHA256"
   license "MIT"
